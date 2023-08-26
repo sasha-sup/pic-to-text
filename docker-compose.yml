@@ -3,5 +3,6 @@ services:
   image_text_conversion:
     image: pic2text
     volumes:
-      - "/home/sasha/code/studies/aws/cloud-practitioner-CLF-C01-CLF-C02/screenshots:/app/screenshots"
-      - "/home/sasha/code/studies/aws/cloud-practitioner-CLF-C01-CLF-C02/output_text:/app/output_text"
+      - "/home/sasha/code/studies/aws/cloud-practitioner-CLF-C01-CLF-C02/screenshots:/app/screenshots:rw"
+      - "/home/sasha/code/studies/aws/cloud-practitioner-CLF-C01-CLF-C02/output_text:/app/output_text:rw"
+    user: "1000:1000" # Replace with your host user's UID and GID

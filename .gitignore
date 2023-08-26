@@ -1,0 +1,14 @@
+# Python-specific
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Output files
+output_text/
+log/
+
+# Docker-specific
+.DS_Store
+.dockerignore

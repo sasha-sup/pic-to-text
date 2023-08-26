@@ -2,10 +2,16 @@ import os
 import pytesseract
 from PIL import Image
 import logging
+import sys
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, filename="image_text_conversion.log", filemode="a",
-                    format="%(asctime)s - %(levelname)s - %(message)s")
+# Create a StreamHandler to log to console
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setLevel(logging.INFO)  # Set the desired log level
+console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+# Add the StreamHandler to the root logger
+logging.getLogger().addHandler(console_handler)
+
 
 def extract_text_from_image(image_path):
     try:
