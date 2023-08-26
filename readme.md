@@ -12,8 +12,8 @@ This manual will guide you through the process of using Docker to convert images
  
 1. Clone this repository and build image:
 ```bash
-   git clone 
-   cd 
+   git clone https://github.com/sasha-sup/pic-to-text
+   cd pic-to-text
    docker build -t pic2text .
 ```
 2. Configure Volumes:
