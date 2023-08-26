@@ -1,6 +1,6 @@
 # Image Text Conversion
 
-This manual will guide you through the process of using Docker to convert images to text using the Tesseract OCR engine. The Python script extracts text from images and saves the extracted text in separate Markdown files.
+This Bash script automates the process of running the `pic-2-text` Docker container using Docker Compose, generating a Markdown file, and renaming it based on the content of the first line.
 
 ## Prerequisites
 
@@ -8,9 +8,9 @@ This manual will guide you through the process of using Docker to convert images
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - Image files you want to process
 
-## How to
+## Usage
  
-1. Clone this repository and build image:
+1. Clone repository and build image:
 ```bash
    git clone https://github.com/sasha-sup/pic-to-text
    cd pic-to-text
@@ -24,7 +24,20 @@ Open the docker-compose.yml file and locate the volumes.
       - "YOUR/INPUT/PIC/DIRECTORY/PATH:/app/screenshots"
       - "YOUR/OUTPUT/DIRECTORY/PATH:/app/output_text"
 ```
-3. Run docker compose
+3. Run app
 ```bash
-   docker-compose up
+   chmod +x app.sh
+   ./app.sh
 ```
+## What the Script Does
+The script runs the pic-2-text Docker container using Docker Compose.
+It waits for a moment to ensure that the container generates the .md file.
+
+The script then extracts the first line from the generated .md file.
+
+The first line is cleaned up to create a valid filename.
+
+The generated .md file is renamed with the cleaned up first line as the new filename.
+
+##  Important Note
+Please review and adjust the paths and configurations in the script according to your environment and requirements before running it.
