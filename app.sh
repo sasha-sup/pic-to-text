@@ -1,14 +1,5 @@
 #!/bin/bash
 
-#####################################################
-# README:
-# 
-# Before running this script, make sure to change the 
-# local_volume_path to the correct directory path where 
-# files are generated and path to docker compose file
-#####################################################
-
-#!/bin/bash
 set -euo pipefail
 echo "Starting the script..."
 
