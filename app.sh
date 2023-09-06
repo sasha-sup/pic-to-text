@@ -10,7 +10,6 @@
 
 #!/bin/bash
 set -euo pipefail
-set +x
 echo "Starting the script..."
 
 # Run pic-2-text using Docker Compose
