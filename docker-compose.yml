@@ -3,6 +3,6 @@ services:
   image_text_conversion:
     image: pic2text
     volumes:
-      - "YOUR/INPUT/PIC/DIRECTORY/PATH:/app/screenshots:rw"
-      - "YOUR/OUTPUT/DIRECTORY/PATH:/app/output_text:rw"
+      - "/home/sasha/Pictures:/app/screenshots:rw"
+      - "/home/sasha/Code/studies/aws/cloud-practitioner-CLF-C01-CLF-C02/output_text:/app/output_text:rw"
     user: "1000:1000"
