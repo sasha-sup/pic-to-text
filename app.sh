@@ -5,7 +5,7 @@ echo "Starting the script..."
 
 # Run pic-2-text using Docker Compose
 echo "Running Docker Compose..."
-docker compose -f your/path/to/docker-compose.yml up -d
+docker compose -f /home/sasha/Code/my-projects/pic-to-text/docker-compose.yml up -d
 
 # Wait for a moment to ensure the container has generated the .md file
 echo "Waiting for file generation..."
