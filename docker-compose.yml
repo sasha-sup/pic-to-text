@@ -5,7 +5,6 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - "/home/sasha/Pictures:/app/screenshots:rw"
-      - "/home/sasha/Code/my-projects/bjj-admin-bot/content:/app/output_text:rw"
-#      - "/home/sasha/Code/studies/Cources/aws/cloud-practitioner-CLF-C01-CLF-C02/output_text:/app/output_text:rw"
+      - "/home/sasha/Pictures/screenshot:/app/screenshots:rw"
+      - "/tmp:/app/output_text:rw"
     user: "1000:1000"

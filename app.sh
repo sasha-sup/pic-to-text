@@ -5,14 +5,14 @@ echo "Starting the script..."
 
 # Run pic-2-text using Docker Compose
 echo "Running Docker Compose..."
-docker compose -f /home/sasha/Code/my-projects/pic-to-text/docker-compose.yml up -d
+docker compose up -d
 
 # Wait for a moment to ensure the container has generated the .md file
 echo "Waiting for file generation..."
 sleep 5
 
 # Define the path to the local volume where files are generated
-directory="YOUR/OUTPUT/DIRECTORY/PATH"
+directory="/tmp"
 
 # Loop through .md files in the directory and rename them
 for file in "$directory"/*.md; do
