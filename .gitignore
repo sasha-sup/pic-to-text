@@ -12,3 +12,5 @@ log/
 # Docker-specific
 .DS_Store
 .dockerignore
+AGENTS.md
+START_PROMPT.md

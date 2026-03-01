@@ -1,47 +1,99 @@
-import os
-import pytesseract
-from PIL import Image
 import logging
+import os
 import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Optional
 
-# Create a StreamHandler to log to console
-console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setLevel(logging.INFO)  # Set the desired log level
-console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+import pytesseract
+from PIL import Image, UnidentifiedImageError
 
-# Add the StreamHandler to the root logger
-logging.getLogger().addHandler(console_handler)
+LOGGER = logging.getLogger(__name__)
+SUPPORTED_EXTENSIONS = (".png", ".jpg", ".jpeg")
 
 
-def extract_text_from_image(image_path):
+@dataclass(frozen=True)
+class Settings:
+    input_directory: Path
+    output_directory: Path
+
+    @classmethod
+    def from_env(cls) -> "Settings":
+        return cls(
+            input_directory=Path(os.getenv("INPUT_DIRECTORY", "/app/screenshots")),
+            output_directory=Path(os.getenv("OUTPUT_DIRECTORY", "/app/output_text")),
+        )
+
+
+def configure_logging() -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        stream=sys.stdout,
+        force=True,
+    )
+
+
+def extract_text_from_image(image_path: Path) -> Optional[str]:
     try:
-        image = Image.open(image_path)
-        text = pytesseract.image_to_string(image)
-        return text
-    except Exception as e:
-        logging.error(f"Error extracting text from {image_path}: {e}")
+        with Image.open(image_path) as image:
+            return pytesseract.image_to_string(image)
+    except (UnidentifiedImageError, OSError, pytesseract.TesseractError) as error:
+        LOGGER.error("Error extracting text from %s: %s", image_path, error)
         return None
 
-def save_text_as_md(text, output_path):
+
+def save_text_as_md(text: str, output_path: Path) -> bool:
     try:
-        with open(output_path, 'w') as f:
-            f.write(text)
-        logging.info(f"Text saved to {output_path}")
-    except Exception as e:
-        logging.error(f"Error saving text to {output_path}: {e}")
+        output_path.write_text(text, encoding="utf-8")
+        LOGGER.info("Text saved to %s", output_path)
+        return True
+    except OSError as error:
+        LOGGER.error("Error saving text to %s: %s", output_path, error)
+        return False
 
-input_directory = "/app/screenshots"
-output_directory = "/app/output_text"
 
-logging.info("Starting image text conversion process")
+def iter_image_files(input_directory: Path) -> list[Path]:
+    return sorted(
+        path
+        for path in input_directory.iterdir()
+        if path.is_file() and path.suffix.lower() in SUPPORTED_EXTENSIONS
+    )
 
-image_files = [f for f in os.listdir(input_directory) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
-for image_file in image_files:
-    image_path = os.path.join(input_directory, image_file)
-    extracted_text = extract_text_from_image(image_path)
-    if extracted_text:
-        output_md_path = os.path.join(output_directory, os.path.splitext(image_file)[0] + ".md")
-        save_text_as_md(extracted_text, output_md_path)
+def process_images(settings: Settings) -> int:
+    if not settings.input_directory.is_dir():
+        LOGGER.error("Input directory does not exist: %s", settings.input_directory)
+        return 1
 
-logging.info("Image text conversion process completed")
+    settings.output_directory.mkdir(parents=True, exist_ok=True)
+    image_files = iter_image_files(settings.input_directory)
+    LOGGER.info("Found %s image(s) for processing", len(image_files))
+
+    converted_files = 0
+    for image_path in image_files:
+        extracted_text = extract_text_from_image(image_path)
+        if not extracted_text:
+            continue
+
+        output_md_path = settings.output_directory / f"{image_path.stem}.md"
+        if save_text_as_md(extracted_text, output_md_path):
+            converted_files += 1
+
+    LOGGER.info(
+        "Image text conversion process completed: %s/%s file(s) saved",
+        converted_files,
+        len(image_files),
+    )
+    return 0
+
+
+def main() -> int:
+    configure_logging()
+    LOGGER.info("Starting image text conversion process")
+    settings = Settings.from_env()
+    return process_images(settings)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
